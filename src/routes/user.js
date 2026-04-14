@@ -1,12 +1,11 @@
-// api/src/routes/user.js
 const express = require('express');
 const router  = express.Router();
 const db      = require('../services/database');
 
-// GET /api/user/:telegramId — ambil profil user
+// GET /api/user/:telegramId
 router.get('/:telegramId', async (req, res) => {
     try {
-        const user = await db.getUser(parseInt(req.params.telegramId));
+        const user = await db.getUser(req.params.telegramId);
         if (!user) return res.status(404).json({ error: 'User not found' });
         res.json(user);
     } catch (err) {
@@ -14,10 +13,10 @@ router.get('/:telegramId', async (req, res) => {
     }
 });
 
-// GET /api/user/:telegramId/summary — daily summary + food list
+// GET /api/user/:telegramId/summary
 router.get('/:telegramId/summary', async (req, res) => {
     try {
-        const tgId = parseInt(req.params.telegramId);
+        const tgId = req.params.telegramId;
         const [summary, foodList] = await Promise.all([
             db.getDailySummary(tgId),
             db.getTodayFoodList(tgId)
@@ -28,10 +27,10 @@ router.get('/:telegramId/summary', async (req, res) => {
     }
 });
 
-// GET /api/user/:telegramId/weekly — weekly logs
+// GET /api/user/:telegramId/weekly
 router.get('/:telegramId/weekly', async (req, res) => {
     try {
-        const logs = await db.getWeeklyLogs(parseInt(req.params.telegramId));
+        const logs = await db.getWeeklyLogs(req.params.telegramId);
         res.json(logs);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -41,7 +40,7 @@ router.get('/:telegramId/weekly', async (req, res) => {
 // GET /api/user/:telegramId/streak
 router.get('/:telegramId/streak', async (req, res) => {
     try {
-        const streak = await db.getStreak(parseInt(req.params.telegramId));
+        const streak = await db.getStreak(req.params.telegramId);
         res.json({ streak });
     } catch (err) {
         res.status(500).json({ error: err.message });
